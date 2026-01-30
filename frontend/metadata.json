@@ -1,0 +1,5 @@
+{
+  "name": "Reserva - Real-time Seat Booking",
+  "description": "A modern, professional seat reservation system featuring authentication, a responsive 10x10 seat map, and booking history management.",
+  "requestFramePermissions": []
+}
