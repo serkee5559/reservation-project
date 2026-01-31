@@ -28,8 +28,9 @@ export const LoginPage: React.FC = () => {
         if (validate()) {
             setIsLoading(true);
             try {
-                // Call Backend Login API
-                const response = await fetch('http://localhost:4000/users/login', {
+                // Use production backend URL or fallback to localhost
+                const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+                const response = await fetch(`${backendUrl}/users/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
