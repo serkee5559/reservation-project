@@ -5,7 +5,9 @@ import { BookingProvider, useBooking } from './context/BookingContext';
 import { Layout } from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
-import { DashboardPage } from './pages/DashboardPage';
+import { TheaterSelectionPage } from './pages/TheaterSelectionPage';
+import { ShowtimeSelectionPage } from './pages/ShowtimeSelectionPage';
+import { SeatSelectionPage } from './pages/SeatSelectionPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { ConfirmPage } from './pages/ConfirmPage';
 
@@ -35,7 +37,23 @@ const AppContent: React.FC = () => {
             path="/"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <TheaterSelectionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/theater/:theaterId/times"
+            element={
+              <ProtectedRoute>
+                <ShowtimeSelectionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/theater/:theaterId/time/:showtime/seats"
+            element={
+              <ProtectedRoute>
+                <SeatSelectionPage />
               </ProtectedRoute>
             }
           />
