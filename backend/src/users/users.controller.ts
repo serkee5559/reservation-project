@@ -15,10 +15,13 @@ export class UsersController {
 
   @Post('login')
   async login(@Body() body: any) {
+    console.log(`Login attempt for user: ${body.username}`);
     const user = await this.usersService.login(body.username, body.password);
     if (!user) {
+      console.log(`Login failed for user: ${body.username}`);
       throw new UnauthorizedException('아이디 또는 비밀번호가 올바르지 않습니다.');
     }
+    console.log(`Login successful for user: ${body.username}`);
     return user;
   }
 
