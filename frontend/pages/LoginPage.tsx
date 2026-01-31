@@ -68,6 +68,40 @@ export const LoginPage: React.FC = () => {
         }
     };
 
+    const handleGuestLogin = async () => {
+        setIsLoading(true);
+        setError('');
+        try {
+            const PRODUCTION_URL = 'https://reservation-project.fly.dev';
+            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const backendUrl = isLocalhost ? 'http://localhost:4000' : PRODUCTION_URL;
+
+            const response = await fetch(`${backendUrl}/users/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: 'guest',
+                    password: '1234',
+                }),
+            });
+
+            if (response.ok) {
+                const userData = await response.json();
+                login(userData.username, userData.name, userData.id, userData.email);
+                navigate('/');
+            } else {
+                setError('게스트 계정 정보를 찾을 수 없습니다.');
+            }
+        } catch (err) {
+            setError('게스트 로그인 중 오류가 발생했습니다.');
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="w-full flex items-center justify-center bg-slate-50 p-4">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-8 fade-in">
@@ -135,6 +169,15 @@ export const LoginPage: React.FC = () => {
                         ) : (
                             '로그인'
                         )}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={handleGuestLogin}
+                        disabled={isLoading}
+                        className="w-full bg-slate-100 text-slate-500 py-3 rounded-xl font-semibold hover:bg-slate-200 transition-colors flex items-center justify-center border border-slate-200 mt-2"
+                    >
+                        게스트 로그인 (guest / 1234)
                     </button>
                 </form>
 
