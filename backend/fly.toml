@@ -4,7 +4,7 @@
 #
 
 app = 'reservation-project'
-primary_region = 'hnd'
+primary_region = 'nrt'
 
 [deploy]
   release_command = 'npx prisma migrate deploy'
