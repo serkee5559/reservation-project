@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useBooking } from '../context/BookingContext';
 
 export const DashboardPage: React.FC = () => {
-  const { seats, toggleSeatSelection, selectedTheater, selectTheater, selectedShowtime, selectShowtime } = useBooking();
+  const { seats, toggleSeatSelection, selectedTheater, selectTheater, selectedShowtime, selectShowtime, showtimeSummary } = useBooking();
   const navigate = useNavigate();
 
   const pendingCount = seats.filter(s => s.status === 'pending').length;
@@ -95,24 +95,35 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {['10:00', '15:00', '20:00'].map((time) => (
-              <button
-                key={time}
-                onClick={() => selectShowtime(time)}
-                className="group p-8 bg-white border-2 border-slate-100 rounded-3xl hover:border-indigo-500 transition-all text-center space-y-4 hover:shadow-xl"
-              >
-                <div className="text-slate-400 group-hover:text-indigo-600 transition-colors">
-                  <i className="far fa-clock text-4xl"></i>
-                </div>
-                <div>
-                  <div className="text-3xl font-black text-slate-900">{time}</div>
-                  <div className="text-sm text-slate-400">오프닝</div>
-                </div>
-                <div className="bg-slate-50 group-hover:bg-indigo-50 text-slate-500 group-hover:text-indigo-600 py-2 rounded-xl text-sm font-bold transition-colors">
-                  선택하기
-                </div>
-              </button>
-            ))}
+            {['10:00', '15:00', '20:00'].map((time) => {
+              const summary = showtimeSummary.find(s => s.showtime === time);
+              return (
+                <button
+                  key={time}
+                  onClick={() => selectShowtime(time)}
+                  className="group p-8 bg-white border-2 border-slate-100 rounded-3xl hover:border-indigo-500 transition-all text-center space-y-4 hover:shadow-xl"
+                >
+                  <div className="text-slate-400 group-hover:text-indigo-600 transition-colors">
+                    <i className="far fa-clock text-4xl"></i>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black text-slate-900">{time}</div>
+                    <div className="text-sm text-slate-400">오프닝</div>
+                  </div>
+
+                  {summary ? (
+                    <div className="text-lg font-bold text-indigo-600 bg-indigo-50 py-1 rounded-lg">
+                      {summary.availableSeats} / {summary.totalSeats}
+                      <span className="block text-[10px] text-indigo-400 uppercase tracking-tighter">예약 가능 좌석</span>
+                    </div>
+                  ) : (
+                    <div className="bg-slate-50 group-hover:bg-indigo-50 text-slate-500 group-hover:text-indigo-600 py-2 rounded-xl text-sm font-bold transition-colors">
+                      선택하기
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

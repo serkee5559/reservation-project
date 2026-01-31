@@ -18,6 +18,7 @@ interface BookingContextType {
   confirmBooking: () => void;
   cancelBooking: (bookingId: string) => void;
   isLoading: boolean;
+  showtimeSummary: { showtime: string, availableSeats: number, totalSeats: number }[];
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
@@ -43,6 +44,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedTheater, setSelectedTheater] = useState<number | null>(null);
   const [selectedShowtime, setSelectedShowtime] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showtimeSummary, setShowtimeSummary] = useState<{ showtime: string, availableSeats: number, totalSeats: number }[]>([]);
 
   const socket = useSocket();
 
@@ -64,8 +66,10 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const selectTheater = (id: number | null) => {
     setSelectedTheater(id);
     setSelectedShowtime(null);
+    setShowtimeSummary([]);
     if (id !== null) {
       setSeats(initialSeats);
+      socket?.emit('get_showtime_summary', { theaterId: id });
     }
   };
 
@@ -197,15 +201,24 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
     };
 
+    const handleShowtimeSummary = (data: { theaterId: number, summary: any[] }) => {
+      if (data.theaterId === selectedTheater) {
+        setShowtimeSummary(data.summary);
+      }
+    };
+
     socket.on('initial_seats', handleInitialSeats);
     socket.on('my_bookings', handleMyBookings);
     socket.on('seat_held', handleSeatHeld);
     socket.on('seat_released', handleSeatReleased);
     socket.on('seat_booked', handleSeatBooked);
     socket.on('booking_cancelled', handleBookingCancelled);
+    socket.on('showtime_summary', handleShowtimeSummary);
 
     if (selectedTheater && selectedShowtime) {
       socket.emit('get_seats', { theaterId: selectedTheater, showtime: selectedShowtime });
+    } else if (selectedTheater) {
+      socket.emit('get_showtime_summary', { theaterId: selectedTheater });
     }
 
     return () => {
@@ -215,6 +228,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       socket.off('seat_released', handleSeatReleased);
       socket.off('seat_booked', handleSeatBooked);
       socket.off('booking_cancelled', handleBookingCancelled);
+      socket.off('showtime_summary', handleShowtimeSummary);
     };
   }, [socket, selectedTheater, selectedShowtime, user]);
 
@@ -295,7 +309,8 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       selectShowtime,
       toggleSeatSelection,
       confirmBooking,
-      cancelBooking
+      cancelBooking,
+      showtimeSummary
     }}>
       {children}
     </BookingContext.Provider>

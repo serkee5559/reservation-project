@@ -125,6 +125,7 @@ export class AppGatewayGateway {
         });
       });
 
+      this.broadcastShowtimeSummary(theaterId);
     } catch (e) {
       console.error(e);
       client.emit('error', e.message || 'Booking failed');
@@ -171,6 +172,8 @@ export class AppGatewayGateway {
       },
     });
 
+    this.broadcastShowtimeSummary(theaterId);
+
     this.server.emit('seat_held', {
       theaterId,
       showtime,
@@ -208,6 +211,8 @@ export class AppGatewayGateway {
           held_until: null,
         },
       });
+
+      this.broadcastShowtimeSummary(theaterId);
 
       this.server.emit('seat_released', {
         theaterId,
@@ -277,6 +282,8 @@ export class AppGatewayGateway {
         });
       });
 
+      this.broadcastShowtimeSummary(booking.seats.theater_id);
+
       // Broadcast update
       this.server.emit('seat_released', {
         theaterId: booking.seats.theater_id,
@@ -292,5 +299,40 @@ export class AppGatewayGateway {
       console.error(e);
       client.emit('error', 'Cancellation failed');
     }
+  }
+
+  @SubscribeMessage('get_showtime_summary')
+  async handleGetShowtimeSummary(
+    @MessageBody() payload: { theaterId: number },
+    @ConnectedSocket() client: Socket
+  ) {
+    const theaterId = payload?.theaterId || 1;
+    await this.broadcastShowtimeSummary(theaterId);
+  }
+
+  private async broadcastShowtimeSummary(theaterId: number) {
+    const showtimes = ['10:00', '15:00', '20:00'];
+
+    const summary = await Promise.all(
+      showtimes.map(async (time) => {
+        const totalSeats = await this.prisma.seats.count({
+          where: { theater_id: theaterId, showtime: time },
+        });
+        const unavailableCount = await this.prisma.seats.count({
+          where: {
+            theater_id: theaterId,
+            showtime: time,
+            status: { not: 'available' },
+          },
+        });
+        return {
+          showtime: time,
+          availableSeats: totalSeats - unavailableCount,
+          totalSeats: totalSeats,
+        };
+      }),
+    );
+
+    this.server.emit('showtime_summary', { theaterId, summary });
   }
 }
