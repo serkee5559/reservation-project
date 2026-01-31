@@ -38,7 +38,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:text-indigo-600'
                   }`}
               >
-                좌석 선택
+                상영관 선택
               </Link>
               <Link
                 to="/history"
