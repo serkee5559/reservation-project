@@ -3,7 +3,8 @@ export type SeatStatus = 'available' | 'pending' | 'reserved' | 'my-booking';
 
 export interface User {
   id: string;
-  email: string;
+  email?: string;
+  username?: string;
   name: string;
 }
 
@@ -17,6 +18,8 @@ export interface Seat {
 
 export interface Booking {
   id: string;
+  theaterId?: number;
+  showtime?: string;
   seatId: string;
   seatLabel: string;
   timestamp: string;

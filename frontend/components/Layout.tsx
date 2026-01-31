@@ -10,10 +10,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
   const handleLogout = () => {
     logout();
-    navigate('/auth');
+    navigate('/login');
   };
 
-  if (!user && location.pathname !== '/auth') {
+  const isAuthPage = ['/auth', '/login', '/signup'].includes(location.pathname);
+
+  if (!user && !isAuthPage) {
     return <>{children}</>;
   }
 
@@ -45,22 +47,40 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="flex flex-col items-end mr-2 hidden sm:flex">
-              <span className="text-sm font-semibold text-slate-900">{user?.name}님</span>
-              <span className="text-xs text-slate-500">{user?.email}</span>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="p-2 text-slate-400 hover:text-red-600 transition-colors"
-              title="로그아웃"
-            >
-              <i className="fas fa-sign-out-alt text-xl"></i>
-            </button>
+            {user && (
+              <>
+                <Link
+                  to="/history"
+                  className="hidden sm:flex md:hidden items-center px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-bold hover:bg-indigo-100 transition-colors"
+                >
+                  <i className="fas fa-history mr-2"></i>
+                  예약 내역
+                </Link>
+                <Link
+                  to="/history"
+                  className="sm:hidden p-2 text-slate-500 hover:text-indigo-600 transition-colors"
+                >
+                  <i className="fas fa-history text-xl"></i>
+                </Link>
+
+                <div className="flex flex-col items-end mr-2 hidden sm:flex">
+                  <span className="text-sm font-semibold text-slate-900">{user.name}님</span>
+                  <span className="text-xs text-slate-500">{user.email}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-slate-400 hover:text-red-600 transition-colors"
+                  title="로그아웃"
+                >
+                  <i className="fas fa-sign-out-alt text-xl"></i>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </header>
 
-      <main className={`flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 ${location.pathname === '/auth' ? 'flex items-center' : ''}`}>
+      <main className={`flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 ${isAuthPage ? 'flex items-center' : ''}`}>
         {children}
       </main>
 

@@ -4,7 +4,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { useBooking } from '../context/BookingContext';
 
 export const ConfirmPage: React.FC = () => {
-  const { seats, confirmBooking } = useBooking();
+  const { seats, confirmBooking, selectedTheater, selectedShowtime } = useBooking();
   const navigate = useNavigate();
 
   const pendingSeats = seats.filter(s => s.status === 'pending');
@@ -22,7 +22,7 @@ export const ConfirmPage: React.FC = () => {
     <div className="fade-in max-w-2xl mx-auto space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-slate-900">선택 좌석 확인</h1>
-        <p className="text-slate-500 mt-1">선택하신 내역이 맞는지 확인해 주세요.</p>
+        <p className="text-slate-500 mt-1">{selectedTheater}관 {selectedShowtime} 시간대의 선택하신 내역이 맞는지 확인해 주세요.</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -32,7 +32,7 @@ export const ConfirmPage: React.FC = () => {
             선택된 좌석 목록 ({pendingSeats.length})
           </h2>
         </div>
-        
+
         <div className="p-6 space-y-4">
           {pendingSeats.map(seat => (
             <div key={seat.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
@@ -42,7 +42,7 @@ export const ConfirmPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="font-bold text-slate-900">{String.fromCharCode(65 + seat.row)}열 {seat.col + 1}번 좌석</p>
-                  <p className="text-xs text-slate-500">메인 홀 좌석</p>
+                  <p className="text-xs text-slate-500">{selectedTheater}관 {selectedShowtime} 좌석</p>
                 </div>
               </div>
               <span className="text-sm font-semibold text-slate-700">무료 예약</span>
@@ -55,15 +55,15 @@ export const ConfirmPage: React.FC = () => {
             <span className="text-slate-600 font-medium">총 선택 좌석</span>
             <span className="text-xl font-bold text-indigo-600">{pendingSeats.length}개</span>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-3">
-            <button 
+            <button
               onClick={() => navigate('/')}
               className="flex-1 px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-100 transition-colors"
             >
               좌석 다시 선택
             </button>
-            <button 
+            <button
               onClick={handleFinalConfirm}
               className="flex-1 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all flex items-center justify-center"
             >

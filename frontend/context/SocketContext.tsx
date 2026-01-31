@@ -11,8 +11,10 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        // Backend listens on port 4000
-        const newSocket = io('http://localhost:4000');
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+        const newSocket = io(backendUrl, {
+            withCredentials: true,
+        });
         setSocket(newSocket);
 
         return () => {

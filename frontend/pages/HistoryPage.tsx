@@ -1,9 +1,23 @@
-
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useBooking } from '../context/BookingContext';
+import { Booking } from '../types';
 
 export const HistoryPage: React.FC = () => {
   const { bookings, cancelBooking } = useBooking();
+
+  const groupedBookings = useMemo(() => {
+    const groups: Record<string, Booking[]> = {};
+    bookings.forEach(booking => {
+      if (!groups[booking.timestamp]) {
+        groups[booking.timestamp] = [];
+      }
+      groups[booking.timestamp].push(booking);
+    });
+    // Sort keys desc
+    return Object.entries(groups).sort((a, b) =>
+      new Date(b[0]).getTime() - new Date(a[0]).getTime()
+    );
+  }, [bookings]);
 
   return (
     <div className="fade-in space-y-6">
@@ -24,48 +38,49 @@ export const HistoryPage: React.FC = () => {
           </a>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bookings.map((booking) => (
-            <div key={booking.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold text-lg">
-                      {booking.seatLabel}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900">{booking.seatLabel} 좌석</h3>
-                      <p className="text-xs text-slate-500">ID: {booking.id}</p>
-                    </div>
-                  </div>
-                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                    booking.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
-                  }`}>
-                    {booking.status === 'confirmed' ? '확정됨' : '취소됨'}
-                  </span>
+        <div className="space-y-6">
+          {groupedBookings.map(([timestamp, group]) => (
+            <div key={timestamp} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                <div className="flex items-center space-x-2 text-slate-600">
+                  <i className="far fa-clock"></i>
+                  <span className="font-medium">{timestamp}</span>
+                  <span className="text-slate-400 text-sm">({group.length}석)</span>
                 </div>
-
-                <div className="space-y-3 pt-4 border-t border-slate-50">
-                  <div className="flex items-center text-sm text-slate-600">
-                    <i className="far fa-clock w-5 text-slate-400"></i>
-                    <span>예약 일시: {booking.timestamp}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-slate-600">
-                    <i className="fas fa-map-marker-alt w-5 text-slate-400"></i>
-                    <span>위치: 메인 홀 {booking.seatLabel.charAt(0)}열</span>
-                  </div>
+                <div className="flex space-x-2">
+                  {/* Aggregate status? If all confirmed, show Confirmed. If mixed, show nothing or mixed. */}
                 </div>
               </div>
 
-              {booking.status === 'confirmed' && (
-                <button 
-                  onClick={() => cancelBooking(booking.id)}
-                  className="w-full py-3 bg-slate-50 hover:bg-red-50 text-slate-600 hover:text-red-600 text-sm font-semibold transition-colors border-t border-slate-100"
-                >
-                  <i className="fas fa-times-circle mr-2"></i>
-                  예약 취소하기
-                </button>
-              )}
+              <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {group.map((booking) => (
+                  <div key={booking.id} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:border-indigo-100 hover:bg-indigo-50/30 transition-all">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold ${booking.status === 'confirmed' ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-400'
+                        }`}>
+                        {booking.seatLabel}
+                      </div>
+                      <div>
+                        <div className="font-bold text-slate-900">{booking.theaterId ? `${booking.theaterId}관` : ''} {booking.showtime} {booking.seatLabel} 좌석</div>
+                        <div className={`text-xs font-semibold ${booking.status === 'confirmed' ? 'text-emerald-600' : 'text-slate-500'
+                          }`}>
+                          {booking.status === 'confirmed' ? '예약 확정' : '취소됨'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {booking.status === 'confirmed' && (
+                      <button
+                        onClick={() => cancelBooking(booking.id)}
+                        className="text-slate-400 hover:text-red-500 transition-colors p-2"
+                        title="예약 취소"
+                      >
+                        <i className="fas fa-times"></i>
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
