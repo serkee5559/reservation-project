@@ -50,7 +50,7 @@ export const LoginPage: React.FC = () => {
                     navigate('/');
                 } else {
                     const errorData = await response.json();
-                    setError(errorData.error || '아이디 또는 비밀번호가 올바르지 않습니다.');
+                    setError(errorData.message || errorData.error || '아이디 또는 비밀번호가 올바르지 않습니다.');
                 }
             } catch (err) {
                 setError('로그인 중 오류가 발생했습니다.');
