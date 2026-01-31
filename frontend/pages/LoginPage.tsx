@@ -33,6 +33,7 @@ export const LoginPage: React.FC = () => {
                 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                 const backendUrl = isLocalhost ? 'http://localhost:4000' : PRODUCTION_URL;
 
+                alert(`Debug: Hostname is ${window.location.hostname}, using backend: ${backendUrl}`);
                 console.log('Attempting login at:', backendUrl);
                 const response = await fetch(`${backendUrl}/users/login`, {
                     method: 'POST',
