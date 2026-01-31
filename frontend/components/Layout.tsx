@@ -15,7 +15,11 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
   const isAuthPage = ['/auth', '/login', '/signup'].includes(location.pathname);
 
-  if (!user && !isAuthPage) {
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
+
+  if (!user) {
     return <>{children}</>;
   }
 

@@ -428,13 +428,13 @@ model bookings {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model seats {
   id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  theater_id Int          @default(1)
-  showtime   String       @default("10:00")
   seat_label String
   status     seat_status? @default(available)
   held_until DateTime?    @db.Timestamptz(6)
   held_by    String?      @db.Uuid
   updated_at DateTime?    @default(now()) @db.Timestamptz(6)
+  theater_id Int          @default(1)
+  showtime   String       @default("10:00")
   bookings   bookings[]
   user       AppUser?     @relation(fields: [held_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
