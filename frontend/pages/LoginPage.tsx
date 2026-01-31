@@ -28,7 +28,7 @@ export const LoginPage: React.FC = () => {
         if (validate()) {
             setIsLoading(true);
             try {
-                // Use production backend URL or fallback to localhost
+                // Use production backend URL from env vars or fallback to localhost
                 const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
                 const response = await fetch(`${backendUrl}/users/login`, {
                     method: 'POST',
