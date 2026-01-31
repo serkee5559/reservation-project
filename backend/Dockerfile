@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Install dependencies
+# Install dependencies (including devDependencies for build)
 RUN npm install
 
 # Copy source code
@@ -26,5 +26,5 @@ RUN npm run build
 # Expose the port
 EXPOSE 4000
 
-# Start the application
-CMD ["npm", "run", "start:prod"]
+# Start the application using the absolute path to the build output
+CMD ["node", "dist/src/main.js"]

@@ -10,7 +10,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: true, // This allows any origin that matches the request's origin, or we can use a callback
     credentials: true,
   },
 })
