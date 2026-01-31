@@ -28,8 +28,11 @@ export const LoginPage: React.FC = () => {
         if (validate()) {
             setIsLoading(true);
             try {
-                // Use production backend URL from env vars or fallback to localhost
-                const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+                // Automatically determine backend URL based on current origin
+                const PRODUCTION_URL = 'https://reservation-project.fly.dev';
+                const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                const backendUrl = isLocalhost ? 'http://localhost:4000' : PRODUCTION_URL;
+
                 console.log('Attempting login at:', backendUrl);
                 const response = await fetch(`${backendUrl}/users/login`, {
                     method: 'POST',
