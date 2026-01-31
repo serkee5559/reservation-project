@@ -16,7 +16,6 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const backendUrl = isLocalhost ? 'http://localhost:4000' : PRODUCTION_URL;
 
-        console.log('Connecting to Socket.io at:', backendUrl);
         const newSocket = io(backendUrl, {
             withCredentials: true,
         });
