@@ -177,7 +177,7 @@ export const LoginPage: React.FC = () => {
                         disabled={isLoading}
                         className="w-full bg-slate-100 text-slate-500 py-3 rounded-xl font-semibold hover:bg-slate-200 transition-colors flex items-center justify-center border border-slate-200 mt-2"
                     >
-                        게스트 로그인 (guest / 1234)
+                        게스트 로그인
                     </button>
                 </form>
 
