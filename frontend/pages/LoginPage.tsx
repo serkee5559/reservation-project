@@ -149,11 +149,7 @@ export const LoginPage: React.FC = () => {
                         </div>
                     )}
 
-                    <div className="flex justify-end">
-                        <button type="button" className="text-xs text-indigo-600 hover:underline font-medium">
-                            비밀번호를 잊으셨나요?
-                        </button>
-                    </div>
+
 
                     <button
                         type="submit"
